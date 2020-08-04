@@ -3,56 +3,51 @@ const Cart = require("../models/cart");
 
 // Call Back Functions
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
-    .then(([rows, fieldData]) => {
+  Product.findAll()
+    .then((result) => {
       res.render("shop/product-list", {
-        prods: rows,
+        prods: result,
         pageTitle: "All Products",
         path: "/products",
-        hasProduct: rows.length > 0,
+        hasProduct: result.length > 0,
         activeShop: true,
         productCSS: true,
       });
     })
-    .catch((err) => {
-      console.log("err", err);
-    });
+    .catch((err) => console.log("err", err));
 };
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
 
-  Product.findById(req.params.productId)
-    .then(([rows, fieldData]) => {
+  Product.findOne({ where: { id: prodId } })
+    .then((result) => {
+      console.log('result', result)
       res.render("shop/product-detail", {
-        product: rows[0],
+        product: result,
         pageTitle: "Product Details",
         path: "/products",
-        hasProduct: rows[0] > 0,
+        hasProduct: result.length > 0,
         activeShop: true,
         productCSS: true,
       });
     })
-    .catch((err) => {
-      console.log("err find id", err);
-    });
+    .catch((err) => console.log("err", err));
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll()
-    .then(([rows, fieldData]) => {
+  Product.findAll()
+    .then((result) => {
       res.render("shop/index", {
-        prods: rows,
+        prods: result,
         pageTitle: "Shop",
         path: "/",
-        hasProduct: rows.length > 0,
+        hasProduct: result.length > 0,
         activeShop: true,
         productCSS: true,
       });
     })
-    .catch((err) => {
-      console.log("err", err);
-    });
+    .catch((err) => console.log("err", err));
 };
 
 exports.getCart = (req, res, next) => {
