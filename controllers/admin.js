@@ -13,12 +13,15 @@ exports.postAddProduct = (req, res, next) => {
   const imageURL = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageURL,
-    description: description,
-  })
+
+  // Create product with association methods
+  req.user
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageURL,
+      description: description,
+    })
     .then((result) => {
       console.log("Product Created !");
       res.redirect("/");
@@ -33,13 +36,15 @@ exports.getEditProduct = async (req, res, next) => {
   if (!editMode) {
     return res.redirect("/");
   }
-  await Product.findOne({ where: { id: req.params.productId } })
+
+  await req.user
+    .getProducts({ where: { id: req.params.productId } })
     .then((result) => {
       res.render("admin/edit-product", {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
         editing: editMode,
-        product: result,
+        product: result[0],
       });
     })
     .catch((err) => {
@@ -91,8 +96,9 @@ exports.postDeleteProduct = async (req, res, next) => {
     });
 };
 
-exports.getProducts = (req, res, next) => {
-  Product.findAll()
+exports.getProducts = async (req, res, next) => {
+  await req.user
+    .getProducts()
     .then((result) => {
       res.render("admin/products", {
         prods: result,
