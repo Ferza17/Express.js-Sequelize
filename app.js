@@ -13,8 +13,9 @@ const errorController = require("./controllers/error");
 const Product = require("./models/product");
 const User = require("./models/user");
 const Cart = require("./models/cart");
+const Order = require("./models/order");
 const CartItem = require("./models/cartItem");
-const { use } = require("./routes/shop");
+const OrderItem = require("./models/orderItem");
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -51,6 +52,10 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
+
 
 // Syncing JS Definitions to the Database
 // Dont use {force : true} in production cause it have to delete all your value on table
